@@ -807,7 +807,7 @@ require('lazy').setup({
     priority = 1000, -- make sure to load this before all the other start plugins
 
     init = function()
-      vim.cmd.colorscheme 'github_dark_default'
+      vim.cmd.colorscheme 'github_light_default'
     end,
   },
   -- { -- You can easily change to a different colorscheme.
