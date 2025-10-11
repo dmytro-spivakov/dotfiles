@@ -93,4 +93,5 @@ lang_versions() {
   echo $versions
 }
 
-PROMPT="%{%}%~$(git_prompt_info)$(hg_prompt_info)$(lang_versions)%{%}%(!.#.»)%{%} "
+RPROMPT='$(lang_versions)'$RPROMPT
+
