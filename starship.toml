@@ -1,0 +1,31 @@
+add_newline = true
+
+[line_break]
+disabled = true
+
+# Git - these are ON by default, but explicit for clarity
+[git_branch]
+format = "[$symbol$branch]($style) "
+
+[git_status]
+format = '([$all_status$ahead_behind]($style) )'
+
+# Disable noisy ones
+[git_commit]
+disabled = true
+
+[git_metrics]
+disabled = true
+
+# Disable package version (rarely useful)
+[package]
+disabled = true
+
+# Compact language versions - just icon + version, no "via"
+[nodejs]
+format = "[$symbol$version]($style) "
+symbol = "⬢ "
+
+[ruby]
+format = "[$symbol$version]($style) "
+symbol = "💎 "
