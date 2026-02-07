@@ -5,8 +5,6 @@ export ZSH=$HOME/.oh-my-zsh
 # load a random theme each time Oh My Zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="af-magic"
-
 plugins=(
 )
 source $ZSH/oh-my-zsh.sh
@@ -70,28 +68,4 @@ PATH=$PATH:/Applications/Postgres.app/Contents/Versions/17/bin
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# show node ver
-lang_versions() {
-  local versions=""
-  
-  # Node - only if package.json in current dir
-  if [[ -f "./package.json" ]] && command -v node &> /dev/null; then
-    versions+="%{$fg[green]%}⬢$(node -v | cut -d. -f1 | sed 's/v//')%{$reset_color%}"
-  fi
-
-  # Python - only if requirements.txt, setup.py, pyproject.toml, or Pipfile
-  if [[ -f "./requirements.txt" || -f "./setup.py" || -f "./pyproject.toml" || -f "./Pipfile" ]] && command -v python3 &> /dev/null; then
-    versions+="%{$fg[blue]%}py$(python3 --version | cut -d' ' -f2 | cut -d. -f1,2)%{$reset_color%}"
-  fi
-  
-  # Go - only if go.mod exists
-  if [[ -f "./go.mod" ]] && command -v go &> /dev/null; then
-    versions+="%{$fg[cyan]%}go$(go version | awk '{print $3}' | sed 's/go//' | cut -d. -f1,2)%{$reset_color%}"
-  fi
-  
-  echo $versions
-}
-
-RPROMPT='$(lang_versions)'$RPROMPT
 
