@@ -1,12 +1,6 @@
-# Path to your Oh My Zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time Oh My Zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-plugins=(
-)
+plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
 # prompt
@@ -18,6 +12,8 @@ zle -N edit-command-line
 bindkey "^X^E" edit-command-line
 
 export EDITOR=nvim
+
+export BAT_THEME="GitHub" # batcat
 
 # lang-specific setup
 # ruby
@@ -63,7 +59,10 @@ alias gcop="git diff --name-only --cached | grep '.rb' | xargs rubocop"
 # alias pip="pip3"
 export PATH=$HOME/.local/bin:$PATH
 
-PATH=$PATH:~/go/bin
+
+# go
+# add compiler to path
+export PATH=$PATH:/usr/local/go/bin
 
 # add Postgres.app bins to path
 PATH=$PATH:/Applications/Postgres.app/Contents/Versions/17/bin
