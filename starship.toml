@@ -1,7 +1,13 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# before the previous out and new prompt
 add_newline = true
 
+# no 2 line prompt
 [line_break]
 disabled = true
+
+[directory]
 
 # Git - these are ON by default, but explicit for clarity
 [git_branch]
