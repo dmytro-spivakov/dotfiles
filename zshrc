@@ -1,25 +1,28 @@
-export ZSH=$HOME/.oh-my-zsh
+# Path to your Oh My Zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
 
 plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
-# prompt
-eval "$(starship init zsh)"
-
-# edit current command in $EDITOR
+# User configuration
 autoload -Uz edit-command-line
 zle -N edit-command-line
 bindkey "^X^E" edit-command-line
 
 export EDITOR=nvim
 
-export BAT_THEME="GitHub" # batcat
-
 # lang-specific setup
 # ruby
-eval "$(rbenv init - zsh)"
+# eval "$(rbenv init - zsh)"
+
+# add go to path
+export PATH=$PATH:/usr/local/go/bin
+
+export BAT_THEME="GitHub"
 
 # aliases
+alias wise_magic_cow='fortune | cowsay | lolcat'
+
 # git
 alias g='git'
 alias ga='git add'
@@ -54,23 +57,13 @@ bindkey '^G' smart-commit
 alias be='bundle exec'
 alias gcop="git diff --name-only --cached | grep '.rb' | xargs rubocop"
 
-# python
-# alias python="python3"
-# alias pip="pip3"
-export PATH=$HOME/.local/bin:$PATH
+# Starship prompt
+eval "$(starship init zsh)"
 
-
-# go
-# add compiler to path
-export PATH=$PATH:/usr/local/go/bin
-
-# add Postgres.app bins to path
-PATH=$PATH:/Applications/Postgres.app/Contents/Versions/17/bin
-
-export NVM_DIR="$HOME/.nvm"
+export NVM_DIR="$HOME/.config/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+export PATH="$HOME/.local/bin:$PATH"
 
-# rust
-. "$HOME/.cargo/env"
-
+# uv bullshit, TODO: use INSTALLER_NO_MODIFY_PATH
+# . "$HOME/.local/share/../bin/env"
