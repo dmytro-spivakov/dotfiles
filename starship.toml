@@ -1,33 +1,27 @@
+# Get editor completions based on the config schema
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# before the previous out and new prompt
-add_newline = true
+# Inserts a blank line between shell prompts
+add_newline = false
 
-# no 2 line prompt
+# Replace the '❯' symbol in the prompt with '➜'
+[character] # The name of the module we are configuring is 'character'
+success_symbol = '[➜](bold green)' # The 'success_symbol' segment is being set to '➜' with the color 'bold green'
+
+# Disable the package module, hiding it from the prompt completely
+[package]
+disabled = true
+
 [line_break]
 disabled = true
 
 [directory]
 
-# Git - these are ON by default, but explicit for clarity
 [git_branch]
-format = "[$symbol$branch]($style) "
-
-[git_status]
-format = '([$all_status$ahead_behind]($style) )'
-
-# Disable noisy ones
 [git_commit]
-disabled = true
+[git_status]
+[git_state]
 
-[git_metrics]
-disabled = true
-
-# Disable package version (rarely useful)
-[package]
-disabled = true
-
-# Compact language versions - just icon + version, no "via"
 [nodejs]
 format = "[$symbol$version]($style) "
 symbol = "⬢ "
@@ -35,3 +29,7 @@ symbol = "⬢ "
 [ruby]
 format = "[$symbol$version]($style) "
 symbol = "💎 "
+
+[python]
+
+
