@@ -868,34 +868,65 @@ require("lazy").setup({
 	},
 	{ -- Highlight, edit, and navigate code
 		"nvim-treesitter/nvim-treesitter",
+		branch = "main", -- the rewrite that supports Neovim 0.11+/0.12; `master` is frozen
+		lazy = false, -- the `main` branch does not support lazy-loading
 		build = ":TSUpdate",
-		opts = {
-			ensure_installed = { "bash", "c", "diff", "html", "lua", "luadoc", "markdown", "vim", "vimdoc" },
-			-- Autoinstall languages that are not installed
-			auto_install = true,
-			highlight = {
-				enable = true,
-				-- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-				--  If you are experiencing weird indenting issues, add the language to
-				--  the list of additional_vim_regex_highlighting and disabled languages for indent.
-				additional_vim_regex_highlighting = { "ruby" },
-			},
-			indent = { enable = true, disable = { "ruby", "html" } },
-		},
-		config = function(_, opts)
+		config = function()
 			-- [[ Configure Treesitter ]] See `:help nvim-treesitter`
+			-- NOTE: the `main` branch is a full rewrite. There is no `nvim-treesitter.configs`
+			-- and no highlight/indent options — Neovim provides those, so we wire them up
+			-- per filetype below. (The old `master` API caused the markdown injection crash.)
+			local ts = require("nvim-treesitter")
+			ts.setup()
 
-			-- Prefer git instead of curl in order to improve connectivity in some environments
-			require("nvim-treesitter.install").prefer_git = true
-			---@diagnostic disable-next-line: missing-fields
-			require("nvim-treesitter.configs").setup(opts)
+			-- Install a baseline set up front (async; a no-op if already present).
+			-- markdown_inline is required for correct markdown highlighting and injections.
+			ts.install({
+				"bash", "c", "diff", "html", "lua", "luadoc",
+				"markdown", "markdown_inline", "vim", "vimdoc",
+			})
 
-			-- There are additional nvim-treesitter modules that you can use to interact
-			-- with nvim-treesitter. You should go explore a few and see what interests you:
-			--
-			--    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-			--    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-			--    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+			-- Turn on treesitter highlighting + indentation whenever a filetype loads,
+			-- auto-installing the parser the first time a language is seen (the `main`
+			-- branch dropped the `auto_install` option, so we replicate it). Injections —
+			-- e.g. fenced code blocks inside markdown — need no setup.
+			local no_indent = { ruby = true, html = true }
+			local function enable(buf, ft)
+				if not vim.api.nvim_buf_is_valid(buf) then
+					return
+				end
+				if not pcall(vim.treesitter.start, buf) then
+					return
+				end
+				if not no_indent[ft] then
+					vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+				end
+			end
+
+			vim.api.nvim_create_autocmd("FileType", {
+				group = vim.api.nvim_create_augroup("treesitter-enable", { clear = true }),
+				callback = function(args)
+					local buf = args.buf
+					local ft = vim.bo[buf].filetype
+					local lang = vim.treesitter.language.get_lang(ft)
+					if not lang then
+						return
+					end
+					if vim.tbl_contains(ts.get_installed(), lang) then
+						enable(buf, ft)
+					elseif vim.tbl_contains(ts.get_available(), lang) then
+						-- not installed yet: fetch + build asynchronously, then enable
+						local ok, handle = pcall(ts.install, lang)
+						if ok and handle and handle.await then
+							handle:await(function()
+								vim.schedule(function()
+									enable(buf, ft)
+								end)
+							end)
+						end
+					end
+				end,
+			})
 		end,
 	},
 	{
